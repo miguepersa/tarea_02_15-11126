@@ -8,4 +8,4 @@ Dependencias:
 * GLEW
 * GLFW
 
-Abrir archivo de solucion "GLP1.sln" y ejecutarlo con el depurador local de Windows
+Abrir archivo de solucion "GLP1.sln" en Visual Studio y ejecutarlo con el depurador local de Windows
