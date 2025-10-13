@@ -14,48 +14,55 @@ document.body.appendChild(renderer.domElement);
 // --- Cube Geometry with Colors ---
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 
-// Colors for each face (6 faces)
+// Define colors for each face
 const faceColors = [
   new THREE.Color(1, 0, 0), // right - red
   new THREE.Color(0, 1, 0), // left - green
+  new THREE.Color(0, 0, 1), // top - blue
   new THREE.Color(1, 1, 0), // bottom - yellow
-  new THREE.Color(1, 1, 0), // top - blue
   new THREE.Color(1, 0, 1), // front - magenta
   new THREE.Color(0, 1, 1)  // back - cyan
 ];
 
-// Each face has 6 vertices (2 triangles)
 const colors = [];
 const position = geometry.attributes.position;
 for (let i = 0; i < position.count; i++) {
-  const faceIndex = Math.floor(i / 6); // 6 vertices per face
+  // Each side has 6 vertices → find which face we’re in
+  const faceIndex = Math.floor(i / 6);
   const color = faceColors[faceIndex];
   colors.push(color.r, color.g, color.b);
 }
 
-geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+geometry.setAttribute("color", new THREE.BufferAttribute(new Float32Array(colors), 3));
 
-const material = new THREE.MeshBasicMaterial({ vertexColors: true });
+// Use a lighting-reactive material
+const material = new THREE.MeshLambertMaterial({ vertexColors: true });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-const clock = new THREE.Clock();
+// --- Add Lights ---
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // soft global light
+scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(3, 3, 5);
+scene.add(directionalLight);
 
 // --- Rotation control ---
 window.addEventListener("keydown", (event) => {
   const step = 0.1;
   switch (event.key) {
     case "ArrowUp":
-      cube.position.x -= step * clock.getDelta();
+      cube.rotation.x -= step;
       break;
     case "ArrowDown":
-      cube.position.x += step * clock.getDelta();
+      cube.rotation.x += step;
       break;
     case "ArrowLeft":
-      cube.position.y -= step * clock.getDelta();
+      cube.rotation.y -= step;
       break;
     case "ArrowRight":
-      cube.position.y += step * clock.getDelta();
+      cube.rotation.y += step;
       break;
   }
 });
